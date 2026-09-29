@@ -1,4 +1,4 @@
-export interface MigrationProgressState {
+export interface BackupProgressState {
   active: boolean
   type: 'export' | 'import' | 'idle'
   phase: string
@@ -10,7 +10,7 @@ export interface MigrationProgressState {
   itemsPerSecond?: number
 }
 
-let progressState: MigrationProgressState = {
+let progressState: BackupProgressState = {
   active: false,
   type: 'idle',
   phase: '',
@@ -19,7 +19,7 @@ let progressState: MigrationProgressState = {
   totalItems: 0,
 }
 
-export function startMigrationProgress(type: 'export' | 'import', initialPhase: string, totalItems: number = 100) {
+export function startBackupProgress(type: 'export' | 'import', initialPhase: string, totalItems: number = 100) {
   const now = Date.now()
   progressState = {
     active: true,
@@ -34,7 +34,7 @@ export function startMigrationProgress(type: 'export' | 'import', initialPhase: 
   }
 }
 
-export function updateMigrationProgress(update: Partial<MigrationProgressState>) {
+export function updateBackupProgress(update: Partial<BackupProgressState>) {
   progressState = { ...progressState, ...update }
   const now = Date.now()
   if (progressState.startTime) {
@@ -51,7 +51,7 @@ export function updateMigrationProgress(update: Partial<MigrationProgressState>)
   }
 }
 
-export function finishMigrationProgress(phase: string = 'Completed successfully!') {
+export function finishBackupProgress(phase: string = 'Completed successfully!') {
   const now = Date.now()
   const elapsed = progressState.startTime ? now - progressState.startTime : 0
   progressState = {
@@ -66,7 +66,7 @@ export function finishMigrationProgress(phase: string = 'Completed successfully!
   }
 }
 
-export function resetMigrationProgress() {
+export function resetBackupProgress() {
   progressState = {
     active: false,
     type: 'idle',
@@ -77,6 +77,6 @@ export function resetMigrationProgress() {
   }
 }
 
-export function getMigrationProgress(): MigrationProgressState {
+export function getBackupProgress(): BackupProgressState {
   return { ...progressState }
 }

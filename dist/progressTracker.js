@@ -6,7 +6,7 @@ let progressState = {
     processedItems: 0,
     totalItems: 0,
 };
-export function startMigrationProgress(type, initialPhase, totalItems = 100) {
+export function startBackupProgress(type, initialPhase, totalItems = 100) {
     const now = Date.now();
     progressState = {
         active: true,
@@ -20,7 +20,7 @@ export function startMigrationProgress(type, initialPhase, totalItems = 100) {
         itemsPerSecond: 0,
     };
 }
-export function updateMigrationProgress(update) {
+export function updateBackupProgress(update) {
     progressState = { ...progressState, ...update };
     const now = Date.now();
     if (progressState.startTime) {
@@ -35,7 +35,7 @@ export function updateMigrationProgress(update) {
         progressState.percent = Math.min(99, Math.max(1, calc));
     }
 }
-export function finishMigrationProgress(phase = 'Completed successfully!') {
+export function finishBackupProgress(phase = 'Completed successfully!') {
     const now = Date.now();
     const elapsed = progressState.startTime ? now - progressState.startTime : 0;
     progressState = {
@@ -49,7 +49,7 @@ export function finishMigrationProgress(phase = 'Completed successfully!') {
         itemsPerSecond: elapsed > 0 ? Number(((progressState.totalItems / elapsed) * 1000).toFixed(1)) : 0,
     };
 }
-export function resetMigrationProgress() {
+export function resetBackupProgress() {
     progressState = {
         active: false,
         type: 'idle',
@@ -59,6 +59,6 @@ export function resetMigrationProgress() {
         totalItems: 0,
     };
 }
-export function getMigrationProgress() {
+export function getBackupProgress() {
     return { ...progressState };
 }

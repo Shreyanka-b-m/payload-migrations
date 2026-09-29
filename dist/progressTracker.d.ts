@@ -1,4 +1,4 @@
-export interface MigrationProgressState {
+export interface BackupProgressState {
     active: boolean;
     type: 'export' | 'import' | 'idle';
     phase: string;
@@ -9,8 +9,8 @@ export interface MigrationProgressState {
     elapsedMs?: number;
     itemsPerSecond?: number;
 }
-export declare function startMigrationProgress(type: 'export' | 'import', initialPhase: string, totalItems?: number): void;
-export declare function updateMigrationProgress(update: Partial<MigrationProgressState>): void;
-export declare function finishMigrationProgress(phase?: string): void;
-export declare function resetMigrationProgress(): void;
-export declare function getMigrationProgress(): MigrationProgressState;
+export declare function startBackupProgress(type: 'export' | 'import', initialPhase: string, totalItems?: number): void;
+export declare function updateBackupProgress(update: Partial<BackupProgressState>): void;
+export declare function finishBackupProgress(phase?: string): void;
+export declare function resetBackupProgress(): void;
+export declare function getBackupProgress(): BackupProgressState;

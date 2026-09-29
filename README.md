@@ -1,8 +1,8 @@
-# @novel/payload-migrations
+# @novel/payload-plugin-backups
 
 Full-site **backup, download and restore** for Payload CMS v3 sites. One click saves every collection, global and uploaded file into a single `.zip`; restoring puts the site back to that state.
 
-Adds a **Site Backups & Migrations** page to the admin panel:
+A Payload **plugin** that adds a **Site Backups** page to the admin panel:
 
 - create a backup (with live progress)
 - list, download, restore and delete stored backups
@@ -33,7 +33,7 @@ Also note:
 ## Install
 
 ```bash
-pnpm add github:Shreyanka-b-m/payload-migrations#v1.0.1
+pnpm add github:Shreyanka-b-m/payload-plugin-backups#v2.0.0
 ```
 
 The version after `#` is a Git tag, so every site stays on the version it was tested with. The package ships compiled code in `dist/`, so there is no build step on install.
@@ -45,11 +45,11 @@ If the repository is **private**, every machine and build that installs it needs
 **1. Add the plugin** in `payload.config.ts`:
 
 ```ts
-import { payloadMigrationsPlugin } from '@novel/payload-migrations'
+import { backupsPlugin } from '@novel/payload-plugin-backups'
 
 export default buildConfig({
   // ...
-  plugins: [payloadMigrationsPlugin()],
+  plugins: [backupsPlugin()],
 })
 ```
 
@@ -59,10 +59,10 @@ export default buildConfig({
 pnpm payload generate:importmap
 ```
 
-**3. Create a database migration** for the new `site-migrations` collection (Postgres/SQLite). `next dev` creates the table automatically, but production needs the migration:
+**3. Create a database migration** for the plugin's backup log collection (Postgres/SQLite). Its internal name is `site-migrations`; that's the plugin's original name, kept so existing sites' data stays in place. `next dev` creates the table automatically, but production needs the migration:
 
 ```bash
-pnpm payload migrate:create site_migrations
+pnpm payload migrate:create site_backups
 ```
 
 MongoDB sites skip this step.
@@ -75,12 +75,12 @@ MongoDB sites skip this step.
 
 **5. (Optional) Regenerate types:** `pnpm payload generate:types`.
 
-Open **Collections → Site Backups & Migrations** in the admin panel.
+Open **Collections → Site Backups** in the admin panel.
 
 ## Options
 
 ```ts
-payloadMigrationsPlugin({
+backupsPlugin({
   enabled: true,
   backupDir: 'storage/backups',
   excludeCollections: ['form-submissions'],
@@ -125,14 +125,14 @@ All routes are under `/api` and require a user allowed by `access`.
 
 | Method | Route | Description |
 | --- | --- | --- |
-| `POST` | `/migration/export` | Create a backup. Returns `{ filename, sizeBytes }`. |
-| `GET` | `/migration/backups` | List stored backups. |
-| `GET` | `/migration/download/:filename` | Download a backup. |
-| `DELETE` | `/migration/backups?filename=` | Delete a backup and its log entry. |
-| `POST` | `/migration/import` | Restore from multipart `file` (upload) or JSON `{ "filename" }` (stored backup). |
-| `GET` | `/migration/progress` | Progress of the running backup or restore. |
+| `POST` | `/site-backups/create` | Create a backup. Returns `{ filename, sizeBytes }`. |
+| `GET` | `/site-backups` | List stored backups. |
+| `GET` | `/site-backups/download/:filename` | Download a backup. |
+| `DELETE` | `/site-backups?filename=` | Delete a backup and its log entry. |
+| `POST` | `/site-backups/restore` | Restore from multipart `file` (upload) or JSON `{ "filename" }` (stored backup). |
+| `GET` | `/site-backups/progress` | Progress of the running backup or restore. |
 
-The functions behind them are exported too: `createExportArchive(payload, options)`, `restoreExportArchive(payload, zipBuffer, options)`, `listBackups(dir)` and more. Use them in scripts run with `payload run`.
+The functions behind them are exported too: `createBackupArchive(payload, options)`, `restoreBackupArchive(payload, zipBuffer, options)`, `listBackups(dir)` and more. Use them in scripts run with `payload run`.
 
 ## Private repository
 
@@ -171,7 +171,7 @@ To try changes in a site before releasing, install from the local folder:
 
 ```bash
 # in the site
-pnpm add file:../payload-migrations
+pnpm add file:../payload-plugin-backups
 ```
 
 Re-run `pnpm build` in the plugin, then `pnpm install` in the site, after each change. Switch the site back to the GitHub version before committing.
@@ -185,9 +185,9 @@ Re-run `pnpm build` in the plugin, then `pnpm install` in the site, after each c
 3. Commit **including `dist/`**, then tag and push:
 
    ```bash
-   git tag v1.1.0 && git push && git push --tags
+   git tag v2.1.0 && git push && git push --tags
    ```
 
-4. In each site: `pnpm add github:Shreyanka-b-m/payload-migrations#v1.1.0`, test, and commit the lockfile.
+4. In each site: `pnpm add github:Shreyanka-b-m/payload-plugin-backups#v2.1.0`, test, and commit the lockfile.
 
-If a release adds or changes fields of the `site-migrations` collection, sites also need `pnpm payload migrate:create`.
+If a release adds or changes fields of the backup log collection (`site-migrations`), sites also need `pnpm payload migrate:create`.

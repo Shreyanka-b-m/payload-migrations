@@ -1,29 +1,29 @@
 /**
- * @novel/payload-migrations: full-site backup, download and restore for Payload CMS v3.
+ * @novel/payload-plugin-backups: full-site backup, download and restore for Payload CMS v3.
  *
- * Admin UI: Collections → "Site Backups & Migrations".
- * REST API (admin users only): /api/migration/{export,import,backups,download/:filename,progress}
+ * Admin UI: Collections → "Site Backups".
+ * REST API (admin users only): /api/site-backups (list, delete), /api/site-backups/{create,restore,download/:filename,progress}
  * Setup and options: see README.md.
  */
-import { createMigrationEndpoints } from './endpoints.js';
-import { createSiteMigrationsCollection, SITE_MIGRATIONS_SLUG } from './SiteMigrations.js';
-export const payloadMigrationsPlugin = (options = {}) => {
+import { createBackupEndpoints } from './endpoints.js';
+import { createBackupsCollection, BACKUPS_COLLECTION_SLUG } from './backupsCollection.js';
+export const backupsPlugin = (options = {}) => {
     return (incomingConfig) => {
         if (options.enabled === false)
             return incomingConfig;
         const config = { ...incomingConfig };
-        if (!config.collections?.some((c) => c.slug === SITE_MIGRATIONS_SLUG)) {
-            config.collections = [...(config.collections || []), createSiteMigrationsCollection(options.access)];
+        if (!config.collections?.some((c) => c.slug === BACKUPS_COLLECTION_SLUG)) {
+            config.collections = [...(config.collections || []), createBackupsCollection(options.access)];
         }
-        config.endpoints = [...(config.endpoints || []), ...createMigrationEndpoints(options)];
+        config.endpoints = [...(config.endpoints || []), ...createBackupEndpoints(options)];
         return config;
     };
 };
 export { isAdminUser } from './types.js';
-export { SITE_MIGRATIONS_SLUG, createSiteMigrationsCollection } from './SiteMigrations.js';
-export { createMigrationEndpoints } from './endpoints.js';
-export { createExportArchive } from './exportService.js';
-export { restoreExportArchive } from './importService.js';
+export { BACKUPS_COLLECTION_SLUG, createBackupsCollection } from './backupsCollection.js';
+export { createBackupEndpoints } from './endpoints.js';
+export { createBackupArchive } from './exportService.js';
+export { restoreBackupArchive } from './importService.js';
 export { getBackupCollections, getBackupGlobalSlugs } from './siteSchema.js';
-export { startMigrationProgress, updateMigrationProgress, finishMigrationProgress, resetMigrationProgress, getMigrationProgress, } from './progressTracker.js';
+export { startBackupProgress, updateBackupProgress, finishBackupProgress, resetBackupProgress, getBackupProgress, } from './progressTracker.js';
 export { listBackups, getBackupPath, saveBackup, deleteBackup } from './backupStorage.js';

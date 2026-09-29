@@ -2,12 +2,14 @@
 
 What the site backup plugin was meant to do, what stopped it from working, what was changed, and how it works now.
 
+> **Names:** this document records the rework as it happened, so older sections use the names from that time (`payload-migrations`, "Site Backups & Migrations", `/api/migration/…`). Since v2.0.0 (2026-09-29) the plugin is called `@novel/payload-plugin-backups`, the admin section is "Site Backups" and the API is under `/api/site-backups`. See the Timeline and [CHANGELOG.md](../CHANGELOG.md).
+
 | | |
 | --- | --- |
-| **Package** | `@novel/payload-migrations` |
-| **Version after the rework** | v1.0.1 |
+| **Package (current name)** | `@novel/payload-plugin-backups` |
+| **Version after the rework** | v1.0.1 (current: see [CHANGELOG.md](../CHANGELOG.md)) |
 | **First used in** | NSH-Next |
-| **In the admin** | Collections → Site Backups & Migrations |
+| **In the admin** | Collections → Site Backups |
 | **Date** | 2026-09-29 |
 
 Later changes are logged, with dates, in [CHANGELOG.md](../CHANGELOG.md).
@@ -116,18 +118,18 @@ The full guide is in the [README](../README.md). In short:
 
 1. Install the package:
    ```bash
-   pnpm add github:Shreyanka-b-m/payload-migrations#v1.0.1
+   pnpm add github:Shreyanka-b-m/payload-plugin-backups#v2.0.0
    ```
 2. Add it to `plugins` in `payload.config.ts`:
    ```ts
-   import { payloadMigrationsPlugin } from '@novel/payload-migrations'
+   import { backupsPlugin } from '@novel/payload-plugin-backups'
    // ...
-   plugins: [payloadMigrationsPlugin()],
+   plugins: [backupsPlugin()],
    ```
 3. Register the admin page, and create the database change for live sites:
    ```bash
    pnpm payload generate:importmap
-   pnpm payload migrate:create site_migrations
+   pnpm payload migrate:create site_backups
    ```
 4. Add `/storage` to `.gitignore` so backup files are never committed.
 
@@ -155,3 +157,4 @@ All of the rework happened on 2026-09-29, in NSH-Next first and then in this rep
 | 2026-09-29 | Moved into its own repo as `@codenet/payload-migrations` v1.0.0: admin-only access, settings, README. Published to GitHub. |
 | 2026-09-29 | Renamed to `@novel/payload-migrations` (v1.0.1). |
 | 2026-09-29 | Added this document and dated change logging. |
+| 2026-09-29 | Renamed to `@novel/payload-plugin-backups` (v2.0.0): Payload already uses "migrations" for database changes, so the old name was confusing. Plugin function is now `backupsPlugin()`, admin section "Site Backups", API under `/api/site-backups`. |

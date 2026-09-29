@@ -15,7 +15,7 @@ export const DownloadCell: React.FC<any> = ({ rowData }) => {
     )
   }
 
-  const downloadUrl = `/api/migration/download/${encodeURIComponent(filename)}`
+  const downloadUrl = `/api/site-backups/download/${encodeURIComponent(filename)}`
 
   return (
     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>

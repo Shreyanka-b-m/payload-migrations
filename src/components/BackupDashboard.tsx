@@ -28,11 +28,11 @@ type Result = {
 
 type PendingAction = { kind: 'restore-file' } | { kind: 'restore-stored' | 'delete'; filename: string }
 
-const CONFIRM_RESTORE_SLUG = 'migration-confirm-restore'
-const CONFIRM_DELETE_SLUG = 'migration-confirm-delete'
+const CONFIRM_RESTORE_SLUG = 'site-backups-confirm-restore'
+const CONFIRM_DELETE_SLUG = 'site-backups-confirm-delete'
 const EMPTY_PROGRESS: Progress = { percent: 0, phase: '', itemsPerSecond: 0, elapsedMs: 0 }
 
-const baseClass = 'payload-migration-dashboard'
+const baseClass = 'site-backups-dashboard'
 
 function formatBytes(bytes: number) {
   if (!bytes) return '0 B'
@@ -99,7 +99,7 @@ const Icon: React.FC<{ name: 'archive' | 'upload' | 'file' | 'check' | 'alert' |
   )
 }
 
-export const MigrationDashboard: React.FC = () => {
+export const BackupDashboard: React.FC = () => {
   const { openModal } = useModal()
   const [task, setTask] = useState<Task>(null)
   const [progress, setProgress] = useState<Progress>(EMPTY_PROGRESS)
@@ -115,7 +115,7 @@ export const MigrationDashboard: React.FC = () => {
 
   const loadBackups = async (): Promise<BackupItem[] | null> => {
     try {
-      const res = await fetch('/api/migration/backups', { credentials: 'include' })
+      const res = await fetch('/api/site-backups', { credentials: 'include' })
       if (res.ok) {
         const data = await res.json()
         return data.backups || []
@@ -149,7 +149,7 @@ export const MigrationDashboard: React.FC = () => {
     if (progressTimerRef.current) clearInterval(progressTimerRef.current)
     progressTimerRef.current = setInterval(async () => {
       try {
-        const res = await fetch('/api/migration/progress', { credentials: 'include' })
+        const res = await fetch('/api/site-backups/progress', { credentials: 'include' })
         if (!res.ok) return
         const data = await res.json()
         if (data.active) {
@@ -178,7 +178,7 @@ export const MigrationDashboard: React.FC = () => {
   const handleExport = async () => {
     startTask('export')
     try {
-      const res = await fetch('/api/migration/export', { method: 'POST', credentials: 'include' })
+      const res = await fetch('/api/site-backups/create', { method: 'POST', credentials: 'include' })
       const data = await res.json()
       if (!res.ok || data.error) throw new Error(data.error || 'Export failed')
 
@@ -198,7 +198,7 @@ export const MigrationDashboard: React.FC = () => {
   const runRestore = async (label: string, init: RequestInit) => {
     startTask('import')
     try {
-      const res = await fetch('/api/migration/import', { method: 'POST', credentials: 'include', ...init })
+      const res = await fetch('/api/site-backups/restore', { method: 'POST', credentials: 'include', ...init })
       const data = await res.json()
       if (!res.ok || data.error) throw new Error(data.error || 'Restore failed')
 
@@ -246,7 +246,7 @@ export const MigrationDashboard: React.FC = () => {
     const { filename } = pending
     setPending(null)
     try {
-      const res = await fetch(`/api/migration/backups?filename=${encodeURIComponent(filename)}`, {
+      const res = await fetch(`/api/site-backups?filename=${encodeURIComponent(filename)}`, {
         method: 'DELETE',
         credentials: 'include',
       })
@@ -280,7 +280,7 @@ export const MigrationDashboard: React.FC = () => {
 
   return (
     <Gutter className={baseClass}>
-      <SetStepNav nav={[{ label: 'Site Backups & Migrations' }]} />
+      <SetStepNav nav={[{ label: 'Site Backups' }]} />
       <header className={`${baseClass}__header`}>
         <div>
           <h1 className={`${baseClass}__title`}>Backups &amp; restore</h1>
@@ -508,7 +508,7 @@ export const MigrationDashboard: React.FC = () => {
                       el="anchor"
                       margin={false}
                       size="small"
-                      url={`/api/migration/download/${encodeURIComponent(b.filename)}`}
+                      url={`/api/site-backups/download/${encodeURIComponent(b.filename)}`}
                     >
                       Download
                     </Button>
@@ -580,4 +580,4 @@ export const MigrationDashboard: React.FC = () => {
   )
 }
 
-export default MigrationDashboard
+export default BackupDashboard

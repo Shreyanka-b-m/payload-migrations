@@ -3,18 +3,18 @@ import fs from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
 import { saveBackup } from './backupStorage.js'
-import { SITE_MIGRATIONS_SLUG } from './SiteMigrations.js'
+import { BACKUPS_COLLECTION_SLUG } from './backupsCollection.js'
 import { getBackupCollections, getBackupGlobalSlugs, getUploadDir } from './siteSchema.js'
-import { resolveBackupDir, type MigrationServiceOptions } from './types.js'
+import { resolveBackupDir, type BackupServiceOptions } from './types.js'
 import {
-  startMigrationProgress,
-  updateMigrationProgress,
-  finishMigrationProgress,
+  startBackupProgress,
+  updateBackupProgress,
+  finishBackupProgress,
 } from './progressTracker.js'
 
 export const ARCHIVE_FORMAT_VERSION = 2
 
-export interface MigrationManifest {
+export interface BackupManifest {
   formatVersion?: number
   exportedAt: string
   collections: Record<string, number>
@@ -35,9 +35,9 @@ function listFiles(dir: string): string[] {
   })
 }
 
-export async function createExportArchive(
+export async function createBackupArchive(
   payload: Payload,
-  options: MigrationServiceOptions = {},
+  options: BackupServiceOptions = {},
 ): Promise<{ filename: string; buffer: Buffer }> {
   const collections = getBackupCollections(payload, options.excludeCollections)
   const globalSlugs = getBackupGlobalSlugs(payload)
@@ -49,11 +49,11 @@ export async function createExportArchive(
   const totalFiles = uploadFiles.reduce((sum, u) => sum + u.files.length, 0)
 
   const totalSteps = collections.length + globalSlugs.length + totalFiles + 1
-  startMigrationProgress('export', 'Counting database collections & files...', Math.max(1, totalSteps))
+  startBackupProgress('export', 'Counting database collections & files...', Math.max(1, totalSteps))
 
   let processedCount = 0
   const zip = new JSZip()
-  const manifest: MigrationManifest = {
+  const manifest: BackupManifest = {
     formatVersion: ARCHIVE_FORMAT_VERSION,
     exportedAt: new Date().toISOString(),
     collections: {},
@@ -66,7 +66,7 @@ export async function createExportArchive(
     const collectionsFolder = zip.folder('collections')!
     for (const collection of collections) {
       const slug = collection.slug
-      updateMigrationProgress({
+      updateBackupProgress({
         phase: `Exporting database collection "${slug}"...`,
         processedItems: processedCount,
       })
@@ -93,12 +93,12 @@ export async function createExportArchive(
       collectionsFolder.file(`${slug}.json`, JSON.stringify(docs, null, 2), { compression: 'DEFLATE' })
 
       processedCount++
-      updateMigrationProgress({ processedItems: processedCount })
+      updateBackupProgress({ processedItems: processedCount })
     }
 
     const globalsFolder = zip.folder('globals')!
     for (const slug of globalSlugs) {
-      updateMigrationProgress({
+      updateBackupProgress({
         phase: `Exporting global settings "${slug}"...`,
         processedItems: processedCount,
       })
@@ -111,7 +111,7 @@ export async function createExportArchive(
       globalsFolder.file(`${slug}.json`, JSON.stringify(globalDoc || {}, null, 2), { compression: 'DEFLATE' })
 
       processedCount++
-      updateMigrationProgress({ processedItems: processedCount })
+      updateBackupProgress({ processedItems: processedCount })
     }
 
     let mediaCount = 0
@@ -127,7 +127,7 @@ export async function createExportArchive(
           console.warn(`[Export] Error archiving ${slug} file ${file}:`, fileErr)
         }
         processedCount++
-        updateMigrationProgress({
+        updateBackupProgress({
           phase: `Archiving ${slug} file (${mediaCount + count}/${totalFiles}): ${file}`,
           processedItems: processedCount,
         })
@@ -139,7 +139,7 @@ export async function createExportArchive(
 
     zip.file('manifest.json', JSON.stringify(manifest, null, 2), { compression: 'DEFLATE' })
 
-    updateMigrationProgress({
+    updateBackupProgress({
       phase: 'Compressing archive & saving to server storage...',
       processedItems: processedCount,
     })
@@ -152,7 +152,7 @@ export async function createExportArchive(
 
     try {
       await payload.create({
-        collection: SITE_MIGRATIONS_SLUG as any,
+        collection: BACKUPS_COLLECTION_SLUG as any,
         data: {
           name: filename,
           filename,
@@ -162,13 +162,13 @@ export async function createExportArchive(
         overrideAccess: true,
       })
     } catch (dbErr) {
-      console.warn('[Export] Could not log migration entry in DB:', dbErr)
+      console.warn('[Export] Could not log backup entry in DB:', dbErr)
     }
 
-    finishMigrationProgress('Backup archive created successfully!')
+    finishBackupProgress('Backup archive created successfully!')
     return { filename, buffer }
   } catch (exportErr) {
-    finishMigrationProgress('Export failed due to server error.')
+    finishBackupProgress('Export failed due to server error.')
     throw exportErr
   }
 }

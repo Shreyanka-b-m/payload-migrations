@@ -1,5 +1,5 @@
 import path from 'path';
-import { SITE_MIGRATIONS_SLUG } from './SiteMigrations.js';
+import { BACKUPS_COLLECTION_SLUG } from './backupsCollection.js';
 /**
  * Collections included in a backup, derived from the live Payload config so the plugin
  * works in any project. Payload's internal collections (payload-*), this plugin's own
@@ -9,7 +9,7 @@ import { SITE_MIGRATIONS_SLUG } from './SiteMigrations.js';
  * then auth collections, then everything else in config order.
  */
 export function getBackupCollections(payload, exclude = []) {
-    const collections = payload.config.collections.filter((c) => !c.slug.startsWith('payload-') && c.slug !== SITE_MIGRATIONS_SLUG && !exclude.includes(c.slug));
+    const collections = payload.config.collections.filter((c) => !c.slug.startsWith('payload-') && c.slug !== BACKUPS_COLLECTION_SLUG && !exclude.includes(c.slug));
     const rank = (c) => (c.upload ? 0 : c.auth ? 1 : 2);
     return [...collections].sort((a, b) => rank(a) - rank(b));
 }

@@ -2,20 +2,20 @@ import JSZip from 'jszip'
 import fs from 'fs'
 import path from 'path'
 import type { Payload, SanitizedCollectionConfig } from 'payload'
-import type { MigrationManifest } from './exportService.js'
+import type { BackupManifest } from './exportService.js'
 import { remapReferences, type IdMaps } from './remapReferences.js'
 import { getBackupCollections, getBackupGlobalSlugs, getUploadDir } from './siteSchema.js'
-import type { MigrationServiceOptions } from './types.js'
+import type { BackupServiceOptions } from './types.js'
 import {
-  startMigrationProgress,
-  updateMigrationProgress,
-  finishMigrationProgress,
+  startBackupProgress,
+  updateBackupProgress,
+  finishBackupProgress,
 } from './progressTracker.js'
 
-export interface ImportResult {
+export interface RestoreResult {
   success: boolean
   message: string
-  manifest?: MigrationManifest
+  manifest?: BackupManifest
   stats: {
     collectionsRestored: Record<string, number>
     globalsRestored: number
@@ -83,11 +83,11 @@ async function restoreUploadFolder(
   return restored
 }
 
-export async function restoreExportArchive(
+export async function restoreBackupArchive(
   payload: Payload,
   zipBuffer: Buffer,
-  options: MigrationServiceOptions = {},
-): Promise<ImportResult> {
+  options: BackupServiceOptions = {},
+): Promise<RestoreResult> {
   const startTime = Date.now()
   const zip = await JSZip.loadAsync(zipBuffer)
 
@@ -95,7 +95,7 @@ export async function restoreExportArchive(
   if (!manifestFile) {
     throw new Error('Invalid backup archive: manifest.json is missing.')
   }
-  const manifest: MigrationManifest = JSON.parse(await manifestFile.async('text'))
+  const manifest: BackupManifest = JSON.parse(await manifestFile.async('text'))
 
   const collections = getBackupCollections(payload, options.excludeCollections)
   const siteGlobals = getBackupGlobalSlugs(payload)
@@ -109,14 +109,14 @@ export async function restoreExportArchive(
     (manifest.mediaFilesCount || 0) + totalDocs + (manifest.globals || []).length,
   )
 
-  startMigrationProgress('import', 'Verifying backup archive manifest...', grandTotal)
+  startBackupProgress('import', 'Verifying backup archive manifest...', grandTotal)
   let processedCount = 0
   const tick = (phase: string) => {
     processedCount++
-    updateMigrationProgress({ phase, processedItems: processedCount })
+    updateBackupProgress({ phase, processedItems: processedCount })
   }
 
-  const stats: ImportResult['stats'] = {
+  const stats: RestoreResult['stats'] = {
     collectionsRestored: {},
     globalsRestored: 0,
     mediaRestored: 0,
@@ -214,10 +214,10 @@ export async function restoreExportArchive(
 
     const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(2)
     const message = `Site backup restored successfully in ${elapsedSeconds}s.`
-    finishMigrationProgress(message)
+    finishBackupProgress(message)
     return { success: true, message, manifest, stats }
   } catch (importErr) {
-    finishMigrationProgress('Import failed due to server error.')
+    finishBackupProgress('Import failed due to server error.')
     throw importErr
   }
 }
@@ -226,7 +226,7 @@ async function restoreCollection(
   payload: Payload,
   collection: SanitizedCollectionConfig,
   docs: any[],
-  stats: ImportResult['stats'],
+  stats: RestoreResult['stats'],
   idMaps: IdMaps,
   onDoc: () => void,
 ): Promise<number> {

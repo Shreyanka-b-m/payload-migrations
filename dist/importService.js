@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { remapReferences } from './remapReferences.js';
 import { getBackupCollections, getBackupGlobalSlugs, getUploadDir } from './siteSchema.js';
-import { startMigrationProgress, updateMigrationProgress, finishMigrationProgress, } from './progressTracker.js';
+import { startBackupProgress, updateBackupProgress, finishBackupProgress, } from './progressTracker.js';
 // Auth bookkeeping that must never be copied between sites/sessions.
 const AUTH_SESSION_FIELDS = [
     'password',
@@ -52,7 +52,7 @@ async function restoreUploadFolder(folder, prefix, targetDir, onFile) {
     }
     return restored;
 }
-export async function restoreExportArchive(payload, zipBuffer, options = {}) {
+export async function restoreBackupArchive(payload, zipBuffer, options = {}) {
     const startTime = Date.now();
     const zip = await JSZip.loadAsync(zipBuffer);
     const manifestFile = zip.file('manifest.json');
@@ -64,11 +64,11 @@ export async function restoreExportArchive(payload, zipBuffer, options = {}) {
     const siteGlobals = getBackupGlobalSlugs(payload);
     const totalDocs = Object.values(manifest.collections || {}).reduce((a, b) => a + (Number(b) || 0), 0);
     const grandTotal = Math.max(1, (manifest.mediaFilesCount || 0) + totalDocs + (manifest.globals || []).length);
-    startMigrationProgress('import', 'Verifying backup archive manifest...', grandTotal);
+    startBackupProgress('import', 'Verifying backup archive manifest...', grandTotal);
     let processedCount = 0;
     const tick = (phase) => {
         processedCount++;
-        updateMigrationProgress({ phase, processedItems: processedCount });
+        updateBackupProgress({ phase, processedItems: processedCount });
     };
     const stats = {
         collectionsRestored: {},
@@ -156,11 +156,11 @@ export async function restoreExportArchive(payload, zipBuffer, options = {}) {
         }
         const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
         const message = `Site backup restored successfully in ${elapsedSeconds}s.`;
-        finishMigrationProgress(message);
+        finishBackupProgress(message);
         return { success: true, message, manifest, stats };
     }
     catch (importErr) {
-        finishMigrationProgress('Import failed due to server error.');
+        finishBackupProgress('Import failed due to server error.');
         throw importErr;
     }
 }

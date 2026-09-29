@@ -1,7 +1,7 @@
 import type { Payload } from 'payload';
-import { type MigrationServiceOptions } from './types.js';
+import { type BackupServiceOptions } from './types.js';
 export declare const ARCHIVE_FORMAT_VERSION = 2;
-export interface MigrationManifest {
+export interface BackupManifest {
     formatVersion?: number;
     exportedAt: string;
     collections: Record<string, number>;
@@ -10,7 +10,7 @@ export interface MigrationManifest {
     uploads?: Record<string, number>;
     mediaFilesCount: number;
 }
-export declare function createExportArchive(payload: Payload, options?: MigrationServiceOptions): Promise<{
+export declare function createBackupArchive(payload: Payload, options?: BackupServiceOptions): Promise<{
     filename: string;
     buffer: Buffer;
 }>;

@@ -2,13 +2,13 @@ import fs from 'fs';
 import { Readable } from 'stream';
 import { addDataAndFileToRequest } from 'payload';
 import { deleteBackup, getBackupPath, listBackups } from './backupStorage.js';
-import { createExportArchive } from './exportService.js';
-import { restoreExportArchive } from './importService.js';
-import { getMigrationProgress } from './progressTracker.js';
-import { SITE_MIGRATIONS_SLUG } from './SiteMigrations.js';
+import { createBackupArchive } from './exportService.js';
+import { restoreBackupArchive } from './importService.js';
+import { getBackupProgress } from './progressTracker.js';
+import { BACKUPS_COLLECTION_SLUG } from './backupsCollection.js';
 import { isAdminUser, resolveBackupDir } from './types.js';
-/** REST routes used by the dashboard, mounted under /api (e.g. /api/migration/export). */
-export function createMigrationEndpoints(options = {}) {
+/** REST routes used by the dashboard, mounted under /api (e.g. /api/site-backups/create). */
+export function createBackupEndpoints(options = {}) {
     const access = options.access ?? isAdminUser;
     const backupDir = () => resolveBackupDir(options.backupDir);
     const serviceOptions = { backupDir: options.backupDir, excludeCollections: options.excludeCollections };
@@ -23,23 +23,23 @@ export function createMigrationEndpoints(options = {}) {
             return await handler(req);
         }
         catch (err) {
-            req.payload.logger.error({ err, msg: '[Migration] Request failed' });
+            req.payload.logger.error({ err, msg: '[Backups] Request failed' });
             return Response.json({ error: err?.message || 'Internal server error' }, { status: 500 });
         }
     };
     return [
         {
-            path: '/migration/progress',
+            path: '/site-backups/progress',
             method: 'get',
-            handler: guarded(async () => Response.json(getMigrationProgress())),
+            handler: guarded(async () => Response.json(getBackupProgress())),
         },
         {
-            path: '/migration/backups',
+            path: '/site-backups',
             method: 'get',
             handler: guarded(async () => Response.json({ backups: listBackups(backupDir()) })),
         },
         {
-            path: '/migration/backups',
+            path: '/site-backups',
             method: 'delete',
             handler: guarded(async (req) => {
                 const filename = req.searchParams.get('filename');
@@ -51,7 +51,7 @@ export function createMigrationEndpoints(options = {}) {
                 }
                 // Remove the matching log entry too, so the collection mirrors the files on disk.
                 await req.payload.delete({
-                    collection: SITE_MIGRATIONS_SLUG,
+                    collection: BACKUPS_COLLECTION_SLUG,
                     where: { filename: { equals: filename } },
                     overrideAccess: true,
                 });
@@ -59,7 +59,7 @@ export function createMigrationEndpoints(options = {}) {
             }),
         },
         {
-            path: '/migration/download/:filename',
+            path: '/site-backups/download/:filename',
             method: 'get',
             handler: guarded(async (req) => {
                 const filename = String(req.routeParams?.filename || '');
@@ -78,17 +78,17 @@ export function createMigrationEndpoints(options = {}) {
             }),
         },
         {
-            path: '/migration/export',
+            path: '/site-backups/create',
             method: 'post',
             handler: guarded(async (req) => {
-                const { filename, buffer } = await createExportArchive(req.payload, serviceOptions);
+                const { filename, buffer } = await createBackupArchive(req.payload, serviceOptions);
                 return Response.json({ success: true, filename, sizeBytes: buffer.length });
             }),
         },
         {
             // Accepts either multipart form data with a "file" field (uploaded .zip),
             // or JSON { filename } to restore a backup already stored on the server.
-            path: '/migration/import',
+            path: '/site-backups/restore',
             method: 'post',
             handler: guarded(async (req) => {
                 await addDataAndFileToRequest(req);
@@ -106,7 +106,7 @@ export function createMigrationEndpoints(options = {}) {
                 if (!zipBuffer || zipBuffer.length === 0) {
                     return Response.json({ error: 'No backup archive provided.' }, { status: 400 });
                 }
-                const result = await restoreExportArchive(req.payload, zipBuffer, serviceOptions);
+                const result = await restoreBackupArchive(req.payload, zipBuffer, serviceOptions);
                 return Response.json(result);
             }),
         },

@@ -1,6 +1,6 @@
 import path from 'path'
 import type { Payload, SanitizedCollectionConfig } from 'payload'
-import { SITE_MIGRATIONS_SLUG } from './SiteMigrations.js'
+import { BACKUPS_COLLECTION_SLUG } from './backupsCollection.js'
 
 /**
  * Collections included in a backup, derived from the live Payload config so the plugin
@@ -12,7 +12,7 @@ import { SITE_MIGRATIONS_SLUG } from './SiteMigrations.js'
  */
 export function getBackupCollections(payload: Payload, exclude: string[] = []): SanitizedCollectionConfig[] {
   const collections = payload.config.collections.filter(
-    (c) => !c.slug.startsWith('payload-') && c.slug !== SITE_MIGRATIONS_SLUG && !exclude.includes(c.slug),
+    (c) => !c.slug.startsWith('payload-') && c.slug !== BACKUPS_COLLECTION_SLUG && !exclude.includes(c.slug),
   )
   const rank = (c: SanitizedCollectionConfig) => (c.upload ? 0 : c.auth ? 1 : 2)
   return [...collections].sort((a, b) => rank(a) - rank(b))

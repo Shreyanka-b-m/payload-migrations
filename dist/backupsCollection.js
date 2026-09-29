@@ -1,13 +1,15 @@
 import { isAdminUser } from './types.js';
-export const SITE_MIGRATIONS_SLUG = 'site-migrations';
+// Kept as 'site-migrations' (the plugin's original name) on purpose: the slug is the database
+// table name, so changing it would need a database migration and would orphan existing entries.
+export const BACKUPS_COLLECTION_SLUG = 'site-migrations';
 /** Log of created backups. Its admin list view is replaced by the backup dashboard. */
-export function createSiteMigrationsCollection(access = isAdminUser) {
+export function createBackupsCollection(access = isAdminUser) {
     const allowed = ({ req }) => access({ req });
     return {
-        slug: SITE_MIGRATIONS_SLUG,
+        slug: BACKUPS_COLLECTION_SLUG,
         labels: {
-            singular: 'Site Backup & Migration',
-            plural: 'Site Backups & Migrations',
+            singular: 'Site Backup',
+            plural: 'Site Backups',
         },
         admin: {
             useAsTitle: 'name',
@@ -15,7 +17,7 @@ export function createSiteMigrationsCollection(access = isAdminUser) {
             components: {
                 views: {
                     list: {
-                        Component: '@novel/payload-migrations/client#MigrationDashboard',
+                        Component: '@novel/payload-plugin-backups/client#BackupDashboard',
                     },
                 },
             },
@@ -33,7 +35,7 @@ export function createSiteMigrationsCollection(access = isAdminUser) {
                 name: 'name',
                 type: 'text',
                 required: true,
-                label: 'Backup / Migration Name',
+                label: 'Backup Name',
             },
             {
                 name: 'filename',
@@ -46,7 +48,7 @@ export function createSiteMigrationsCollection(access = isAdminUser) {
                 label: 'File Size (Bytes)',
                 admin: {
                     components: {
-                        Cell: '@novel/payload-migrations/client#SizeCell',
+                        Cell: '@novel/payload-plugin-backups/client#SizeCell',
                     },
                 },
             },
@@ -56,7 +58,7 @@ export function createSiteMigrationsCollection(access = isAdminUser) {
                 label: 'Download Action',
                 admin: {
                     components: {
-                        Cell: '@novel/payload-migrations/client#DownloadCell',
+                        Cell: '@novel/payload-plugin-backups/client#DownloadCell',
                     },
                 },
             },

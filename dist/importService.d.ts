@@ -1,10 +1,10 @@
 import type { Payload } from 'payload';
-import type { MigrationManifest } from './exportService.js';
-import type { MigrationServiceOptions } from './types.js';
-export interface ImportResult {
+import type { BackupManifest } from './exportService.js';
+import type { BackupServiceOptions } from './types.js';
+export interface RestoreResult {
     success: boolean;
     message: string;
-    manifest?: MigrationManifest;
+    manifest?: BackupManifest;
     stats: {
         collectionsRestored: Record<string, number>;
         globalsRestored: number;
@@ -16,4 +16,4 @@ export interface ImportResult {
         }>;
     };
 }
-export declare function restoreExportArchive(payload: Payload, zipBuffer: Buffer, options?: MigrationServiceOptions): Promise<ImportResult>;
+export declare function restoreBackupArchive(payload: Payload, zipBuffer: Buffer, options?: BackupServiceOptions): Promise<RestoreResult>;

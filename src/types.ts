@@ -1,7 +1,7 @@
 import path from 'path'
 import type { PayloadRequest } from 'payload'
 
-export interface PluginMigrationsOptions {
+export interface BackupsPluginOptions {
   /** Set to false to remove the plugin (collection, admin view and API routes). Default: true */
   enabled?: boolean
   /**
@@ -18,12 +18,12 @@ export interface PluginMigrationsOptions {
   excludeCollections?: string[]
 }
 
-export interface MigrationServiceOptions {
+export interface BackupServiceOptions {
   backupDir?: string
   excludeCollections?: string[]
 }
 
-export const isAdminUser: NonNullable<PluginMigrationsOptions['access']> = ({ req }) =>
+export const isAdminUser: NonNullable<BackupsPluginOptions['access']> = ({ req }) =>
   Boolean(req.user && req.user.collection === req.payload.config.admin.user)
 
 export function resolveBackupDir(backupDir?: string): string {
