@@ -15,7 +15,7 @@ export function createSiteMigrationsCollection(access = isAdminUser) {
             components: {
                 views: {
                     list: {
-                        Component: '@codenet/payload-migrations/client#MigrationDashboard',
+                        Component: '@novel/payload-migrations/client#MigrationDashboard',
                     },
                 },
             },
@@ -46,7 +46,7 @@ export function createSiteMigrationsCollection(access = isAdminUser) {
                 label: 'File Size (Bytes)',
                 admin: {
                     components: {
-                        Cell: '@codenet/payload-migrations/client#SizeCell',
+                        Cell: '@novel/payload-migrations/client#SizeCell',
                     },
                 },
             },
@@ -56,7 +56,7 @@ export function createSiteMigrationsCollection(access = isAdminUser) {
                 label: 'Download Action',
                 admin: {
                     components: {
-                        Cell: '@codenet/payload-migrations/client#DownloadCell',
+                        Cell: '@novel/payload-migrations/client#DownloadCell',
                     },
                 },
             },

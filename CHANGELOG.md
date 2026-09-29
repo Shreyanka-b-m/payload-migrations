@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1
+
+- Renamed the package from `@codenet/payload-migrations` to `@novel/payload-migrations`.
+  To upgrade a site: `pnpm remove @codenet/payload-migrations`, install `github:Shreyanka-b-m/payload-migrations#v1.0.1`,
+  change the import in `payload.config.ts` to `@novel/payload-migrations`, then run `pnpm payload generate:importmap`.
+  No database migration is needed.
+
 ## 1.0.0
 
 First standalone release, extracted from NSH-Next.

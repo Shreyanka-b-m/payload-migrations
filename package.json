@@ -1,6 +1,6 @@
 {
-  "name": "@codenet/payload-migrations",
-  "version": "1.0.0",
+  "name": "@novel/payload-migrations",
+  "version": "1.0.1",
   "description": "Full-site backup, download and restore for Payload CMS v3 sites (collections, globals and uploaded files in one .zip).",
   "license": "MIT",
   "type": "module",

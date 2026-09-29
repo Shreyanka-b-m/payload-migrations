@@ -1,4 +1,4 @@
-# @codenet/payload-migrations
+# @novel/payload-migrations
 
 Full-site **backup, download and restore** for Payload CMS v3 sites. One click saves every collection, global and uploaded file into a single `.zip`; restoring puts the site back to that state.
 
@@ -31,7 +31,7 @@ Also note:
 ## Install
 
 ```bash
-pnpm add github:Shreyanka-b-m/payload-migrations#v1.0.0
+pnpm add github:Shreyanka-b-m/payload-migrations#v1.0.1
 ```
 
 The version after `#` is a Git tag, so every site stays on the version it was tested with. The package ships compiled code in `dist/`, so there is no build step on install.
@@ -43,7 +43,7 @@ If the repository is **private**, every machine and build that installs it needs
 **1. Add the plugin** in `payload.config.ts`:
 
 ```ts
-import { payloadMigrationsPlugin } from '@codenet/payload-migrations'
+import { payloadMigrationsPlugin } from '@novel/payload-migrations'
 
 export default buildConfig({
   // ...

@@ -1,5 +1,5 @@
 /**
- * @codenet/payload-migrations: full-site backup, download and restore for Payload CMS v3.
+ * @novel/payload-migrations: full-site backup, download and restore for Payload CMS v3.
  *
  * Admin UI: Collections → "Site Backups & Migrations".
  * REST API (admin users only): /api/migration/{export,import,backups,download/:filename,progress}
