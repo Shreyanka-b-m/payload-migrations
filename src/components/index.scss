@@ -1,0 +1,533 @@
+// Built on Payload admin theme variables so it follows light/dark mode automatically.
+.payload-migration-dashboard {
+  --pmd-gap: calc(var(--base) * 0.8);
+  --pmd-radius: var(--style-radius-m, 6px);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--pmd-gap);
+  padding-top: calc(var(--base) * 0.6);
+  padding-bottom: var(--spacing-view-bottom, calc(var(--base) * 2));
+  color: var(--theme-text);
+  font-size: 14px;
+
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  &__muted {
+    color: var(--theme-elevation-500);
+    font-size: 13px;
+  }
+
+  // Header + stats
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--pmd-gap);
+    padding-bottom: var(--pmd-gap);
+    border-bottom: 1px solid var(--theme-elevation-100);
+  }
+
+  // Matches Payload's own list view title
+  &__title {
+    font-family: var(--font-body);
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 32px;
+  }
+
+  &__subtitle {
+    margin-top: 6px !important;
+    max-width: 62ch;
+    color: var(--theme-elevation-600);
+    line-height: 1.5;
+  }
+
+  &__stats {
+    display: flex;
+    margin: 0;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--pmd-radius);
+    background: var(--theme-elevation-50);
+  }
+
+  &__stat {
+    padding: 8px 16px;
+    min-width: 110px;
+
+    & + & {
+      border-left: 1px solid var(--theme-elevation-150);
+    }
+
+    dt {
+      color: var(--theme-elevation-500);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    dd {
+      margin: 2px 0 0;
+      font-size: 16px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+  }
+
+  // Cards
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--pmd-gap);
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: calc(var(--base) * 0.9);
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--pmd-radius);
+    background: var(--theme-elevation-0, var(--theme-bg));
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    > p {
+      color: var(--theme-elevation-600);
+      line-height: 1.5;
+    }
+  }
+
+  &__includes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .payload-migration-dashboard__icon {
+      width: 16px;
+      height: 16px;
+      color: var(--theme-success-500);
+    }
+  }
+
+  // Red variant of Payload's secondary button (its "error" style ships without styles)
+  & &__danger {
+    --color: var(--theme-error-500);
+    --btn-border: 1px solid var(--theme-error-400);
+    --hover-color: var(--theme-error-600);
+    --hover-btn-border: 1px solid var(--theme-error-500);
+  }
+
+  &__card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--pmd-radius);
+    background: var(--theme-elevation-100);
+    color: var(--theme-elevation-800);
+  }
+
+  &__card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 6px;
+  }
+
+  // Dropzone + selected file
+  &__dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 18px 12px;
+    border: 1.5px dashed var(--theme-elevation-250, var(--theme-elevation-200));
+    border-radius: var(--pmd-radius);
+    background: var(--theme-elevation-50);
+    color: var(--theme-elevation-600);
+    font: inherit;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease;
+
+    strong {
+      color: var(--theme-text);
+    }
+
+    &:hover:not(:disabled),
+    &--active {
+      border-color: var(--theme-elevation-500);
+      background: var(--theme-elevation-100);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--theme-elevation-800);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__file {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--pmd-radius);
+    background: var(--theme-elevation-50);
+  }
+
+  &__file-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__file-name {
+    overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__dismiss {
+    display: inline-flex;
+    padding: 4px;
+    border: 0;
+    border-radius: var(--style-radius-s, 4px);
+    background: transparent;
+    color: inherit;
+    opacity: 0.65;
+    cursor: pointer;
+
+    .payload-migration-dashboard__icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover:not(:disabled) {
+      opacity: 1;
+      background: var(--theme-elevation-100);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  // Progress
+  &__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: calc(var(--base) * 0.8);
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--pmd-radius);
+    background: var(--theme-elevation-50);
+  }
+
+  &__progress-head,
+  &__progress-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__progress-percent {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__progress-track {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--theme-elevation-150);
+  }
+
+  &__progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--theme-success-500);
+    transition: width 0.3s ease;
+  }
+
+  &__progress-meta {
+    color: var(--theme-elevation-600);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__progress-phase {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__progress-note {
+    color: var(--theme-elevation-500);
+    font-size: 12px;
+  }
+
+  // Result banner
+  &__result {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid;
+    border-radius: var(--pmd-radius);
+
+    p {
+      margin-top: 2px;
+      line-height: 1.5;
+    }
+
+    &--success {
+      border-color: var(--theme-success-250, var(--theme-success-200));
+      background: var(--theme-success-50, var(--theme-success-100));
+      color: var(--theme-success-800, var(--theme-success-750));
+    }
+
+    &--warning {
+      border-color: var(--theme-warning-250, var(--theme-warning-200));
+      background: var(--theme-warning-50, var(--theme-warning-100));
+      color: var(--theme-warning-800, var(--theme-warning-750));
+    }
+
+    &--error {
+      border-color: var(--theme-error-250, var(--theme-error-200));
+      background: var(--theme-error-50, var(--theme-error-100));
+      color: var(--theme-error-800, var(--theme-error-750));
+    }
+  }
+
+  &__result-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__result-details {
+    margin-top: 8px;
+
+    summary {
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    ul {
+      max-height: 220px;
+      margin: 8px 0 0;
+      padding-left: 18px;
+      overflow: auto;
+    }
+
+    li {
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    code {
+      margin-right: 4px;
+      font-family: var(--font-mono, monospace);
+      font-size: 12px;
+    }
+  }
+
+  // Backups table
+  &__card--table {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  &__table-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: calc(var(--base) * 0.9) calc(var(--base) * 0.9) 0;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 10px calc(var(--base) * 0.9);
+      text-align: left;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--theme-elevation-100);
+    }
+
+    th {
+      color: var(--theme-elevation-500);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: var(--theme-elevation-50);
+    }
+
+    td[data-label='Created'],
+    td[data-label='Size'] {
+      color: var(--theme-elevation-600);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+  }
+
+  &__filename {
+    font-family: var(--font-mono, monospace);
+    font-size: 13px;
+    word-break: break-all;
+  }
+
+  &__badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--theme-success-100);
+    color: var(--theme-success-750, var(--theme-success-800));
+    font-size: 11px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+
+  &__row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: calc(var(--base) * 1.5) var(--base);
+    color: var(--theme-elevation-500);
+    text-align: center;
+
+    .payload-migration-dashboard__icon {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 4px;
+    }
+
+    strong {
+      color: var(--theme-text);
+    }
+  }
+
+  // Phones: stack the table rows as cards
+  @media (max-width: 768px) {
+    &__stats {
+      width: 100%;
+    }
+
+    &__stat {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+
+      dt {
+        font-size: 10px;
+      }
+
+      dd {
+        font-size: 14px;
+        white-space: normal;
+      }
+    }
+
+    &__badge {
+      margin: 4px 0 0;
+    }
+
+    &__table {
+      thead {
+        display: none;
+      }
+
+      tr {
+        display: block;
+        padding: 12px calc(var(--base) * 0.9);
+        border-bottom: 1px solid var(--theme-elevation-100);
+      }
+
+      tbody tr:last-child {
+        border-bottom: 0;
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 3px 0;
+        border: 0;
+
+        &[data-label]::before {
+          content: attr(data-label);
+          color: var(--theme-elevation-500);
+        }
+
+        &[data-label='File'] {
+          flex-direction: column;
+          align-items: flex-start;
+
+          &::before {
+            display: none;
+          }
+        }
+      }
+    }
+
+    & &__table td#{&}__row-actions {
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      padding-top: 8px;
+    }
+  }
+}

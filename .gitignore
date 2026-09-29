@@ -1,0 +1,4 @@
+node_modules/
+*.tsbuildinfo
+.DS_Store
+# dist/ is committed on purpose: sites install straight from GitHub without a build step.

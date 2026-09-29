@@ -1,0 +1,56 @@
+{
+  "name": "@codenet/payload-migrations",
+  "version": "1.0.0",
+  "description": "Full-site backup, download and restore for Payload CMS v3 sites (collections, globals and uploaded files in one .zip).",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/exports/client.d.ts",
+      "import": "./dist/exports/client.js",
+      "default": "./dist/exports/client.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json && sass --no-source-map src/components/index.scss dist/components/index.css",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "jszip": "^3.10.2"
+  },
+  "peerDependencies": {
+    "@payloadcms/ui": "^3.0.0",
+    "payload": "^3.0.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@payloadcms/ui": "3.89.0",
+    "@types/node": "22.19.9",
+    "@types/react": "19.2.14",
+    "next": "16.3.3",
+    "payload": "3.89.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "sass": "^1.77.4",
+    "typescript": "5.7.3"
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
+  }
+}
