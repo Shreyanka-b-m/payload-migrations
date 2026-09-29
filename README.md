@@ -9,6 +9,8 @@ Adds a **Site Backups & Migrations** page to the admin panel:
 - restore from an uploaded `.zip`
 - follows the admin theme (light/dark) and works on phones
 
+How this plugin came to be, the issues fixed in the original version, and how it works: [docs/REWORK.md](docs/REWORK.md). Every change since is in [CHANGELOG.md](CHANGELOG.md), with dates.
+
 ## When to use it
 
 It's built for sites set up like NSH-Next:
@@ -152,6 +154,12 @@ A public repository needs none of this.
 
 ## Developing the plugin
 
+### Document every change
+
+Every change to this repo, however small, gets a dated entry in [CHANGELOG.md](CHANGELOG.md) **in the same commit**. Add it under **Unreleased** using the template at the top of that file: the date (YYYY-MM-DD), what changed in plain words, why, and what sites must do after upgrading. Also update this README when setup, options or behaviour change.
+
+### Commands
+
 ```bash
 pnpm install
 pnpm build       # compile to dist/ (TypeScript + SCSS → CSS)
@@ -173,7 +181,7 @@ Re-run `pnpm build` in the plugin, then `pnpm install` in the site, after each c
 `dist/` is committed so sites can install without building.
 
 1. Make the change, then run `pnpm build`.
-2. Bump `version` in `package.json` and add an entry to `CHANGELOG.md`.
+2. Bump `version` in `package.json`. In `CHANGELOG.md`, rename **Unreleased** to `## x.y.z (YYYY-MM-DD)` with today's date.
 3. Commit **including `dist/`**, then tag and push:
 
    ```bash
